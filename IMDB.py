@@ -2,17 +2,17 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# لینک دیتاست
+
 url = "https://gist.githubusercontent.com/cookiemonster/9aea43748c470d49434b61e48dee1f44/raw/89814e416bf79d2467f8910bda782dd0e46620a4/imdb_top_1000.csv"
 
-# خواندن دیتاست
+
 df = pd.read_csv(url)
 
-# انتخاب ستون‌های مورد نیاز
+
 df = df[['Series_Title', 'Released_Year', 'Genre', 'Director', 'Star1', 'Star2', 'Star3']]
 df['Released_Year'] = df['Released_Year'].astype(str)
 
-# ترکیب همه متن‌ها در یک ستون
+
 df['combined_feature'] = (
     df['Series_Title'] + " " +
     df['Released_Year'] + " " +
@@ -23,14 +23,15 @@ df['combined_feature'] = (
     df['Star3']
 )
 
-# تبدیل متن به TF-IDF
+
 vectorizer = TfidfVectorizer(stop_words='english')
 matrix = vectorizer.fit_transform(df['combined_feature'])
 
-# محاسبه شباهت کسینوسی
+
 similarity = cosine_similarity(matrix)
 
-# تابع پیشنهاد فیلم
+
+
 def recommend(movie_title, top_n=5):
     movie_title = movie_title.strip()
 
@@ -46,7 +47,9 @@ def recommend(movie_title, top_n=5):
     recommended_movies = [df.iloc[i[0]]['Series_Title'] for i in similarity_scores]
     return recommended_movies
 
-# بخش تعاملی با کاربر
+
+
+
 while True:
     movie_name = input("Enter a movie title (or type 'exit' to quit): ").strip()
     if movie_name.lower() == 'exit':
@@ -55,6 +58,7 @@ while True:
 
     result = recommend(movie_name)
     print(f"Movies similar to '{movie_name}': {result}\n")
+
 
 
 
